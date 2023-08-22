@@ -1,13 +1,9 @@
 const { Client, LocalAuth } = require('whatsapp-web.js');
-const readline = require('readline');
-const axios = require('axios');
+const { when, info } = require('../resources/questions.js');
 const qrcode = require('qrcode-terminal');
+const { voice, vid_call, voice_call, call, image, when_anw, description, gak_ngerti } = require('../resources/answers.js');
 const client = new Client({
   authStrategy: new LocalAuth(),
-});
-const rl = readline.createInterface({
-  input: process.stdin,
-  output: process.stdout,
 });
 
 client.on('qr', (qr) => {
@@ -21,47 +17,40 @@ client.on('ready', () => {
 
 client.initialize();
 
-const description = 'Infinity adalah sebuah event tahunan terbesar & terkeren dari UKM PROGRESS';
-const tanggal = `
-Pelaksanaan event ini akan dilakukan pada bulan *Oktober*, jadi segera daftar dan beli tiketnya disini yaa
-
-https://infinityprogress.id
-`;
-
 client.on('message', (message) => {
   console.log(message.type);
   console.log('message.type');
 
   if (message.type == 'chat') {
     switch (message.body != undefined) {
-      case message.body === 'hello':
+      case message.body === 'hello' || message.body === 'halo':
         message.reply('Hiiiii');
         break;
 
-      case message.body.includes('kapan'):
-        message.reply(tanggal);
+      case message.body.includes(when):
+        message.reply(when_anw);
         break;
 
-      case message.body.includes('infinity'):
+      case message.body.includes(info) || message.body.includes('infi'):
         message.reply(description);
         break;
 
       default:
-        message.reply('Apasii yang kamu mau tanya?, ulang dong aku gapaham');
+        message.reply(gak_ngerti);
         break;
     }
   } else if (message.type == 'ptt') {
-    message.reply('Akuu males denger suara kamuuuu, suaramu kayak knalpot bocor');
+    message.reply(voice);
   } else if (message.type == 'call_log') {
     if (message._data.subtype == 'miss_video') {
-      message.reply('JANGAAN VIDEO CALL AKUUU, AKUU AKU JIJIK MASS');
+      message.reply(vid_call);
     } else if (message._data.subtype == 'miss') {
-      message.reply('APASIH TELPON-TELPON, MAAF ADA HATI YANG HARUS KU JAGA');
+      message.reply(voice_call);
     } else {
-      message.reply('GABUT BET LUU JOMBLOO');
+      message.reply(call);
     }
   } else if (message.type == 'image') {
-    message.reply('Gamau ahh buka fotonya takut mataku ternodai');
+    message.reply(image);
   }
 });
 
